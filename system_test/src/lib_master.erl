@@ -210,7 +210,10 @@ check_obsolite_services(DesiredServices)->
 %% --------------------------------------------------------------------
 check_missing_services(DesiredServices)->
     PingR=[{tcp_client:call({IpAddr,Port},{list_to_atom(ServiceId),ping,[]},?CLIENT_TIMEOUT),IpAddr,Port}||{ServiceId,IpAddr,Port}<-DesiredServices],
-    ActiveServices=[{atom_to_list(ServiceId),IpAddr,Port}||{{pong,_,ServiceId},IpAddr,Port}<-PingR],
+    ActiveServices=[{atom_to_list(Service),IpAddr,Port}||{{pong,_,Service},IpAddr,Port}<-PingR],
+    %ensure that dns is updated 
+    [dns_service:add(ServiceId,IpAddr,Port)||{ServiceId,IpAddr,Port}<-ActiveServices],
+
     Missing=[{DesiredServiceId,DesiredIpAddr,DesiredPort}||{DesiredServiceId,DesiredIpAddr,DesiredPort}<-DesiredServices,
 							   false=:=lists:member({DesiredServiceId,DesiredIpAddr,DesiredPort},ActiveServices)],
     

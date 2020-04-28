@@ -198,8 +198,11 @@ compile(Pod,PodId,ServiceId)->
     PathEbin=filename:join([PodId,ServiceId,"ebin"]),
  %   PathTestSrc=filename:join([PodId,ServiceId,"test_src"]),
  %   PathTestEbin=filename:join([PodId,ServiceId,"test_ebin"]),
-  % Wrong   PathInclude=filename:join([PodId,"include"]),
-    PathInclude=PodId,
+
+    % Ful fix 
+  %  PathInclude=case filelib:is_file(
+    PathInclude=filename:join([PodId,"include"]),
+ % Wrong        PathInclude=PodId,
     %Get erl files that shall be compiled
     Result=do_compile(Pod,PodId,ServiceId,PathSrc,PathEbin,PathInclude),
  %   do_compile(Pod,PodId,ServiceId,PathTestSrc,PathTestEbin),
@@ -212,7 +215,8 @@ do_compile(Pod,PodId,ServiceId,PathSrc,PathEbin,PathInclude)->
 		   % clean up ebin dir
 		   case rpc:call(Pod,os,cmd,["rm -rf "++PathEbin++"/*"]) of
 		       []->
-			   CompileResult=[{rpc:call(Pod,c,c,[ErlFile,[{outdir,PathEbin},{i,PathInclude},?COMPILER]],5000),ErlFile}||ErlFile<-FilesToCompile],
+			 %  CompileResult=[{rpc:call(Pod,c,c,[ErlFile,[{outdir,PathEbin},{i,PathInclude},?COMPILER]],5000),ErlFile}||ErlFile<-FilesToCompile],
+			 CompileResult=[{rpc:call(Pod,c,c,[ErlFile,[{outdir,PathEbin},{i,PathInclude}]],5000),ErlFile}||ErlFile<-FilesToCompile],  
 			   case [{R,File}||{R,File}<-CompileResult,error==R] of
 			       []->
 				   AppFileSrc=filename:join(PathSrc,ServiceId++".app"),

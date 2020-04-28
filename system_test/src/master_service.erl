@@ -178,7 +178,7 @@ h_beat(Interval)->
 	ok->
 	    ok;
 	Err->
-	    lib_service:log_event(?MODULE,?LINE,orchistrater,campaign,error,[Err])
+	    rpc:call(node(),lib_service,log_event,[?MODULE,?LINE,orchistrater,campaign,error,[Err]])
     end,
     timer:sleep(Interval),
     rpc:cast(node(),?MODULE,heart_beat,[Interval]).
