@@ -47,6 +47,8 @@ log_event(Module,Line,Severity,Info)->
 			message=Info
 		       },
     case tcp_client:call(?DNS_ADDRESS,{dns_service,get,["log_service"]}) of
+	{error,[econnrefused,tcp_client,Line]}->
+	    {error,[econnrefused,tcp_client,Line]};
 	[]->
 	    {error,[eexists,"log_service"]};
 	IpAddresses->
