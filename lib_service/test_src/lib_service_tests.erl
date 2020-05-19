@@ -31,9 +31,10 @@ cases_test()->
     [clean_start(),
      eunit_start(),
      % Add funtional test cases 
-     misc_test:start(),
+%     misc_test:start(),
  %    pod_test:start(),
-     tcp_test:start(),
+ %    tcp_test:start(),
+     mail_test:start(),
      % cleanup and stop eunit 
      clean_stop(),
      eunit_stop()].
